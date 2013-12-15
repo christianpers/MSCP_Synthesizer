@@ -7,21 +7,119 @@
 	
 
 	<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+
+	<script src="js/Envelope.js"></script>
+	<script src="js/CustomOsc.js"></script>
+	<script src="js/FrequencyModulator.js"></script>
+	<script src="js/Keyboard.js"></script>
 	<script src="js/Synthesizer.js"></script>
 
 	<script>
 	document.addEventListener("DOMContentLoaded", function() {
 
 		var synth = new Synthesizer();
-		synth.setup(document.getElementById('mainContainer'));
+		synth.setup(document.getElementById('mainContainer'), .05);
 	});
 	</script>
+
+	<style>
+		.nodeWrapper{
+			float: left;
+			margin-right: 100px;
+		}
+	
+		input{
+			display: block;
+			margin-top: 40px;
+		}
+	</style>
 
 </head>
 
 <body>
 
-	<div id="mainContainer"></div>
+	<div id="mainContainer">
+		<div class="modulatorNode nodeWrapper">
+			<h3>Modulator</h3>
+			<div class="inputBlock freq">
+				<input type="range" name="modSliderFreq" min="1" max="800">
+				<span>Freq</span>
+				<span class="val">val</span>
+			</div>
+		<!-- 	<div class="inputBlock gain">
+				<input type="range" name="modSliderGain" min="1" max="400">
+				<span>Gain</span>
+				<span class="val">val</span>
+			</div> -->
+			<div class="inputBlock envelope">
+				<div class="attack">
+					<input type="range" name="modSliderGain" min="0" max="1000">
+					<span>Attack</span>
+					<span class="val">val</span>
+				</div>
+				<div class="decay">
+					<input type="range" name="modSliderGain" min="0" max="1000">
+					<span>Decay</span>
+					<span class="val">val</span>
+				</div>
+				<div class="sustain">
+					<input type="range" name="modSliderGain" min="0" max="100">
+					<span>Sustain</span>
+					<span class="val">val</span>
+				</div>
+				<div class="release">
+					<input type="range" name="modSliderGain" min="0" max="4000">
+					<span>Release</span>
+					<span class="val">val</span>
+				</div>
+			</div>
+		</div>
+		<div class="carrierNode nodeWrapper">
+			<h3>Carrier</h3>
+			<div class="inputBlock freq">
+				<input type="range" name="carrSliderFreq" min="1" max="800">
+				<span>Freq</span>
+				<span class="val">val</span>
+			</div>
+			<!-- <div class="inputBlock gain">
+				<input type="range" name="carrSliderGain" min="1" max="400">
+				<span>Gain</span>
+				<span class="val">val</span>
+			</div> -->
+			<div class="inputBlock envelope">
+				<h5 class="carrierAmp"></h5>
+				<h5 class="modulatorAmp"></h5>
+				<div class="attack">
+					<input type="range" name="modSliderGain" min="0" max="1000">
+					<span>Attack</span>
+					<span class="val">val</span>
+				</div>
+				<div class="decay">
+					<input type="range" name="modSliderGain" min="0" max="1000">
+					<span>Decay</span>
+					<span class="val">val</span>
+				</div>
+				<div class="sustain">
+					<input type="range" name="modSliderGain" min="0" max="100">
+					<span>Sustain</span>
+					<span class="val">val</span>
+				</div>
+				<div class="release">
+					<input type="range" name="modSliderGain" min="0" max="4000">
+					<span>Release</span>
+					<span class="val">val</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="masterGainNode nodeWrapper">
+			<h3>MasterVol</h3>
+			<div class="inputBlock gain">
+				<input type="range" name="masterSliderGain" min="0" max="1" step="0.01">
+				<span class="val">val</span>
+			</div>
+		</div>
+	</div>
 
 
 </body>
