@@ -44,6 +44,7 @@
 		this._el = el;
 
 		this.node = ctx.createGain();
+		this.node.gain.value = 0;
 
 		this._visualControllers.attack.blockEl = this._el.querySelector('.attack');
 		this._visualControllers.attack.valEl = this._visualControllers.attack.blockEl.querySelector('.val');
