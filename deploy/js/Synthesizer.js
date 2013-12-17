@@ -42,16 +42,37 @@
 		this.setMasterGain(gain);
 
 		this._masterGainVisuals.slider.addEventListener('change', this._onMasterGainSliderChange.bind(this));
+		
 
+		this.meterNode = this._audioCtx.createJavaScriptNode(2048, 1, 1);
+		this.meterNode.onaudioprocess = processAudio;
+	
 		this._freqModulator.connect(this._masterGain);
+		this._masterGain.connect(this.meterNode);
+		
 
-		this._masterGain.connect(this._audioCtx.destination);
+
+		this.meterNode.connect(this._audioCtx.destination);
 
 		document.addEventListener('keydown', this._onKeyDown.bind(this));
 		document.addEventListener('keyup', this._onKeyUp.bind(this));
 
 
 	};
+
+	function processAudio(e) {
+	  var buffer = e.inputBuffer.getChannelData(0);
+
+	  var isClipping = false;
+	  // Iterate through buffer to check if any of the |values| exceeds 1.
+	  for (var i = 0; i < buffer.length; i++) {
+	    var absValue = Math.abs(buffer[i]);
+	    if (absValue >= 1) {
+	      isClipping = true;
+	      break;
+	    }
+	  }
+	}
 
 	p.setMasterGain = function(val){
 

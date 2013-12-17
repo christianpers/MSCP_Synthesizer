@@ -68,13 +68,13 @@
 		
 		this._attack = initVals.att/1000;
 		this._decay = initVals.dec/1000;
-		this._sustain = initVals.sus;
+		this._sustain = initVals.sus/100;
 		this._release = initVals.rel/1000;
 	};
 
 	p.trigger = function(time, volume){
 
-		// console.log('env trigger', time, volume);
+		// console.log('env trigger', time, volume, 'attck: ',this._attack, ' decay: ',this._decay, ' sus: ',this._sustain);
 
 		this.node.gain.cancelScheduledValues(time);
 		this.node.gain.value = volume;

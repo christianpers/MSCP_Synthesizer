@@ -17,7 +17,7 @@
 		
 		var modEl = document.querySelector('.modulatorNode');
 		this._modulatorNode = new CustomOsc();
-		this._modulatorNode.setup(this._audioCtx, "sine", 110, .5, {att: 50, dec: 600, sus: 20, rel: 400}, modEl, 1);
+		this._modulatorNode.setup(this._audioCtx, "sine", 110, 0, {att: 50, dec: 300, sus: 20, rel: 400}, modEl, 1);
 
 		var carrEl = document.querySelector('.carrierNode');
 		this._carrierNode = new CustomOsc();
@@ -28,6 +28,13 @@
 		this._carrierAmpVisual = carrEl.querySelector('.amp');
 		this._modulatorAmpVisual = modEl.querySelector('.amp');
 		this._updateVisualsTimer = null;
+
+		var self = this;
+		this._updateVisualsTimer = setInterval(function(){
+
+			self.updateVisuals();
+
+		},60);
 		
 	};
 
@@ -40,24 +47,19 @@
 
 		this._modulatorNode.setFreq(freq);
 		console.log(this.getModAmplitude(this._modulatorNode._oscNode.frequency.value));
-		this._modulatorNode._envelope.trigger(this._audioCtx.currentTime, this.getModAmplitude(this._modulatorNode._oscNode.frequency.value));
+		this._modulatorNode._envelope.trigger(this._audioCtx.currentTime, freq);
 
 		this._carrierNode.setFreq(freq);
 		this._carrierNode._envelope.trigger(this._audioCtx.currentTime, this._carrierNode._gainVol);
 
-		var self = this;
-		this._updateVisualsTimer = setInterval(function(){
-
-			self.updateVisuals();
-
-		},60);
+		
 
 		
 	};
 
 	p.noteOff = function(){
 
-		clearInterval(this._updateVisualsTimer);
+		// clearInterval(this._updateVisualsTimer);
 
 		var currTime = this._audioCtx.currentTime;
 
