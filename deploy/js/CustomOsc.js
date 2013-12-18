@@ -36,12 +36,12 @@
 		
 		this._visualControllers.freq.blockEl = this._el.querySelector('.inputBlock.freq');
 		this._visualControllers.freq.valEl = this._visualControllers.freq.blockEl.querySelector('.val');
-		this._visualControllers.freq.slider = this._visualControllers.freq.blockEl.querySelector('input');
-		this._visualControllers.freq.slider.value = freq;
-		this._visualControllers.freq.slider.addEventListener('change', this.onFreqSliderChange.bind(this));
+		// this._visualControllers.freq.slider = this._visualControllers.freq.blockEl.querySelector('input');
+		// this._visualControllers.freq.slider.value = freq;
+		// this._visualControllers.freq.slider.addEventListener('change', this.onFreqSliderChange.bind(this));
 
-		var attackSlider = this._el.querySelector('.inputBlock.envelope .attack input');
-		attackSlider.addEventListener('change', this.onAttackSliderChange.bind(this));
+		// var attackSlider = this._el.querySelector('.inputBlock.envelope .attack input');
+		// attackSlider.addEventListener('change', this.onAttackSliderChange.bind(this));
 	
 	
 		this._audioCtx = ctx;
@@ -100,16 +100,6 @@
 		this.setFreq(val);
 	};
 
-	p.onAttackSliderChange = function(e){
-
-
-
-	};
-
-	// p.onGainSliderChange = function(e){
-
-	// 	var val = e.target.value;
-	// 	this.setGain(val);
-	// };
+	
 
 })();

@@ -7,6 +7,10 @@
 		this._carrierNode = null;
 		this._destinationNode = null;
 
+		this._modWaveformAnalyser = null;
+
+		this._useLFO = false;
+
 	};
 
 	var p = FrequencyModulator.prototype;
@@ -16,26 +20,45 @@
 		this._audioCtx = ctx;
 		
 		var modEl = document.querySelector('.modulatorNode');
-		this._modulatorNode = new CustomOsc();
-		this._modulatorNode.setup(this._audioCtx, "sine", 110, 0, {att: 50, dec: 300, sus: 20, rel: 400}, modEl, 1);
+		if (!this._useLFO){
+			
+			this._modulatorNode = new CustomOsc();
+			this._modulatorNode.setup(this._audioCtx, 2, 110, 0, {att: 200, dec: 300, sus: 20, rel: 400}, modEl, 1);
+		}else{
+			this._modulatorNode = new LFO();
+			this._modulatorNode.setup(this._audioCtx, 0);
+		}
+	
 
 		var carrEl = document.querySelector('.carrierNode');
 		this._carrierNode = new CustomOsc();
-		this._carrierNode.setup(this._audioCtx, "sine", 440, 1, {att: 10, dec: 200, sus: 70, rel: 200}, carrEl, 4);
+		this._carrierNode.setup(this._audioCtx, 2, 440, 1, {att: 100, dec: 200, sus: 70, rel: 200}, carrEl, 4);
 	
-		this._modulatorNode.getGainNode().connect(this._carrierNode.getOscNode().frequency);
+		if (!this._useLFO)
+			this._modulatorNode.getGainNode().connect(this._carrierNode.getOscNode().frequency);
+		else
+			this._modulatorNode.connect(this._carrierNode.getOscNode().frequency);
+
+		// this._modWaveformAnalyser = new WaveformAnalyser();
+		// this._modWaveformAnalyser.setup(ctx, document.getElementById('modWaveformAnalyser'));
+		// this._modWaveformAnalyser.connect(this._modulatorNode.getOscNode());
+
+		// this._carrWaveformAnalyser = new WaveformAnalyser();
+		// this._carrWaveformAnalyser.setup(ctx, document.getElementById('carrWaveformAnalyser'));
+		// this._carrWaveformAnalyser.connect(this._carrierNode.getGainNode());
+
+		this._carrWaveformAnalyser = new WaveformAnalyser();
+		this._carrWaveformAnalyser.setup(ctx, document.getElementById('carrWaveformAnalyser'), 2048);
+		this._carrWaveformAnalyser.connect(this._modulatorNode.getOscNode());
+
+		this._carrSpectrumAnalyser = new SpectrumAnalyser();
+		this._carrSpectrumAnalyser.setup(ctx, document.getElementById('carrSpectrumAnalyser'));
+		this._carrSpectrumAnalyser.connect(this._carrierNode.getGainNode());
 
 		this._carrierAmpVisual = carrEl.querySelector('.amp');
 		this._modulatorAmpVisual = modEl.querySelector('.amp');
 		this._updateVisualsTimer = null;
 
-		var self = this;
-		this._updateVisualsTimer = setInterval(function(){
-
-			self.updateVisuals();
-
-		},60);
-		
 	};
 
 	p.connect = function(node){
@@ -45,9 +68,11 @@
 
 	p.noteOn = function(freq){
 
-		this._modulatorNode.setFreq(freq);
-		console.log(this.getModAmplitude(this._modulatorNode._oscNode.frequency.value));
-		this._modulatorNode._envelope.trigger(this._audioCtx.currentTime, freq);
+		if (!this._useLFO){
+			this._modulatorNode.setFreq(freq);
+			this._modulatorNode._envelope.trigger(this._audioCtx.currentTime, freq);
+		}
+		
 
 		this._carrierNode.setFreq(freq);
 		this._carrierNode._envelope.trigger(this._audioCtx.currentTime, this._carrierNode._gainVol);
@@ -62,8 +87,9 @@
 		// clearInterval(this._updateVisualsTimer);
 
 		var currTime = this._audioCtx.currentTime;
-
-		this._modulatorNode._envelope.release(currTime);
+		if (!this._useLFO)
+			this._modulatorNode._envelope.release(currTime);
+	
 		this._carrierNode._envelope.release(currTime);
 
 		// this._modulatorNode.stop(currTime);
@@ -75,7 +101,15 @@
 
 		
 		this._carrierAmpVisual.innerHTML = this._carrierNode._envelope.node.gain.value;
-		this._modulatorAmpVisual.innerHTML = this._modulatorNode._envelope.node.gain.value;
+		if (!this._useLFO)
+			this._modulatorAmpVisual.innerHTML = this._modulatorNode._envelope.node.gain.value;
+
+		this._carrWaveformAnalyser.update();
+		this._carrWaveformAnalyser.render();
+
+		this._carrSpectrumAnalyser.update();
+		this._carrSpectrumAnalyser.render();
+
 
 	};
 

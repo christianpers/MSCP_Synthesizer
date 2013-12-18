@@ -14,6 +14,10 @@
 		this._masterGainVisuals = {};
 		this._masterGainVisuals.slider = null;
 		this._masterGainVisuals.val = 0;
+
+		this._masterWaveformAnalyser = null;
+
+		this._recorderNode = null;
 	};
 
 	var p = Synthesizer.prototype;
@@ -44,35 +48,68 @@
 		this._masterGainVisuals.slider.addEventListener('change', this._onMasterGainSliderChange.bind(this));
 		
 
-		this.meterNode = this._audioCtx.createJavaScriptNode(2048, 1, 1);
-		this.meterNode.onaudioprocess = processAudio;
 	
 		this._freqModulator.connect(this._masterGain);
-		this._masterGain.connect(this.meterNode);
+
+		this._meterNode = new MeteringNode();
+		this._meterNode.setup(this._audioCtx);
+
+	
+		this._masterGain.connect(this._meterNode.node);
+
+		this._meterNode.connect(this._audioCtx.destination);
+
+		// var delayNodeTest = this._audioCtx.createDelayNode();
+		// delayNodeTest.delayTime.value = .4;
 		
 
+		var lopassTest = this._audioCtx.createBiquadFilter();
+		lopassTest.type = "lowpass";
+		lopassTest.frequency.value = 800;
 
-		this.meterNode.connect(this._audioCtx.destination);
+		this._masterGain.connect(lopassTest);
+
+		this._recorderNode = new RecordNode();
+		this._recorderNode.setup(this._audioCtx);
+		lopassTest.connect(this._recorderNode.node);
+		this._recorderNode.createNewBuffer();
+		this._recorderNode.node.connect(this._audioCtx.destination);
+
+		
+
+		lopassTest.connect(this._audioCtx.destination);
+
+		this._masterWaveformAnalyser = new WaveformAnalyser();
+		this._masterWaveformAnalyser.setup(this._audioCtx, document.getElementById('masterWaveformAnalyser'),256);
+		this._masterWaveformAnalyser.connect(this._masterGain);
 
 		document.addEventListener('keydown', this._onKeyDown.bind(this));
 		document.addEventListener('keyup', this._onKeyUp.bind(this));
 
+		var self = this;
+		this._updateVisualsTimer = setInterval(function(){
+
+			self.updateVisuals();
+
+
+		},60);
+
 
 	};
 
-	function processAudio(e) {
-	  var buffer = e.inputBuffer.getChannelData(0);
+	// function processAudio(e) {
+	//   var buffer = e.inputBuffer.getChannelData(0);
 
-	  var isClipping = false;
-	  // Iterate through buffer to check if any of the |values| exceeds 1.
-	  for (var i = 0; i < buffer.length; i++) {
-	    var absValue = Math.abs(buffer[i]);
-	    if (absValue >= 1) {
-	      isClipping = true;
-	      break;
-	    }
-	  }
-	}
+	//   var isClipping = false;
+	//   // Iterate through buffer to check if any of the |values| exceeds 1.
+	//   for (var i = 0; i < buffer.length; i++) {
+	//     var absValue = Math.abs(buffer[i]);
+	//     if (absValue >= 1) {
+	//       isClipping = true;
+	//       break;
+	//     }
+	//   }
+	// }
 
 	p.setMasterGain = function(val){
 
@@ -92,11 +129,20 @@
 		var keyCode = e.keyCode;
 		var keyObj = this._keyboard.getKey(keyCode);
 		if (keyObj !== null){
+
 			e.preventDefault();
+			var type = keyObj.type;
 			if (keyObj.triggered) return;
-			keyObj.triggered = true;
-			var freq = this.getFreq(keyObj.step);
-			this._freqModulator.noteOn(freq);
+			
+			if (type == 'note'){
+				keyObj.triggered = true;
+				var freq = this.getFreq(keyObj.step);
+				this._freqModulator.noteOn(freq);
+
+			}else if (type == 'octave'){
+				this.setNewOctave(keyObj.direction);
+			}
+			
 			
 		}
 	};
@@ -112,8 +158,21 @@
 		
 			keyObj.triggered = false;
 			this._freqModulator.noteOff();
-		}
+		};
 
+	};
+
+	p.setNewOctave = function(direction){
+
+		console.log(direction);
+
+		if (direction == 'up'){
+			if (this._currentOctave == 8) return;
+			this._currentOctave++;
+		}else if (direction == 'down'){
+			if (this._currentOctave == 0) return;
+			this._currentOctave--;
+		}
 	};
 	
 
@@ -124,8 +183,18 @@
 		
 		var freq = Synthesizer.BASE_FREQ * Math.pow(Synthesizer.ROOT, tempSteps);
 
-		return freq;v
+		return freq;
 	};
+
+	p.updateVisuals = function(){
+
+		this._masterWaveformAnalyser.update();
+		this._masterWaveformAnalyser.render();
+
+		this._freqModulator.updateVisuals();
+
+	};
+
 
 
 

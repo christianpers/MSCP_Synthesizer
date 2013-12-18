@@ -9,9 +9,15 @@
 	<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 
 	<script src="js/Envelope.js"></script>
+	<script src="js/SpectrumAnalyser.js"></script>
+	<script src="js/WaveformAnalyser.js"></script>
+	<script src="js/LFO.js"></script>
 	<script src="js/CustomOsc.js"></script>
 	<script src="js/FrequencyModulator.js"></script>
 	<script src="js/Keyboard.js"></script>
+	<script src="js/RecordBufferItem.js"></script>
+	<script src="js/RecordNode.js"></script>
+	<script src="js/MeteringNode.js"></script>
 	<script src="js/Synthesizer.js"></script>
 
 	<script>
@@ -27,11 +33,40 @@
 			float: left;
 			margin-right: 100px;
 		}
-	
 		input{
 			display: block;
 			margin-top: 40px;
 		}
+		#masterWaveformAnalyser{
+			height: 400px;
+			width: 400px;
+			margin: 20px;
+			float:left;
+		}
+		#carrWaveformAnalyser, #carrSpectrumAnalyser{
+			height: 400px;
+			width: 400px;
+			margin: 20px;
+			float:left;
+		}
+		.recordedAudioBlock{
+			float: left;
+			width: 50px;
+			height: 50px;
+			background: black;
+		}
+
+		.recordCircle{
+			border-radius: 5px;
+			width: 10px;
+			height: 10px;
+			background: red;
+			position: absolute;
+			bottom: 200px;
+			right: 20px;
+		}
+
+
 	</style>
 
 </head>
@@ -42,7 +77,7 @@
 		<div class="modulatorNode nodeWrapper">
 			<h3>Modulator</h3>
 			<div class="inputBlock freq">
-				<input type="range" name="modSliderFreq" min="1" max="800">
+				<!-- <input type="range" name="modSliderFreq" min="1" max="800"> -->
 				<span>Freq</span>
 				<span class="val">val</span>
 			</div>
@@ -79,7 +114,7 @@
 		<div class="carrierNode nodeWrapper">
 			<h3>Carrier</h3>
 			<div class="inputBlock freq">
-				<input type="range" name="carrSliderFreq" min="1" max="800">
+				<!-- <input type="range" name="carrSliderFreq" min="1" max="800"> -->
 				<span>Freq</span>
 				<span class="val">val</span>
 			</div>
@@ -123,7 +158,19 @@
 				<span class="val">val</span>
 			</div>
 		</div>
+
+		<div class="recordCircle"></div>
 	</div>
+
+
+
+	
+	
+	<div id="carrWaveformAnalyser"><h5>Modulator</h5></div>
+
+	<div id="masterWaveformAnalyser"><h5>Master</h5></div>
+
+	<div id="carrSpectrumAnalyser"><h5>Carrier Spectrum</h5></div>
 
 
 </body>
