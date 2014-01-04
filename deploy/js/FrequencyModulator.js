@@ -23,7 +23,7 @@
 		if (!this._useLFO){
 			
 			this._modulatorNode = new CustomOsc();
-			this._modulatorNode.setup(this._audioCtx, 2, 110, 0, {att: 200, dec: 300, sus: 20, rel: 400}, modEl, 1);
+			this._modulatorNode.setup(this._audioCtx, 1, 110, 0, {att: 200, dec: 300, sus: 20, rel: 400}, modEl, 1);
 		}else{
 			this._modulatorNode = new LFO();
 			this._modulatorNode.setup(this._audioCtx, 0);
@@ -32,7 +32,7 @@
 
 		var carrEl = document.querySelector('.carrierNode');
 		this._carrierNode = new CustomOsc();
-		this._carrierNode.setup(this._audioCtx, 2, 440, 1, {att: 100, dec: 200, sus: 70, rel: 200}, carrEl, 4);
+		this._carrierNode.setup(this._audioCtx, 1, 440, 1, {att: 100, dec: 200, sus: 70, rel: 200}, carrEl, 4);
 	
 		if (!this._useLFO)
 			this._modulatorNode.getGainNode().connect(this._carrierNode.getOscNode().frequency);

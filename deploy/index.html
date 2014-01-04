@@ -4,7 +4,9 @@
 	
 	<title>MSCP !</title>
 
-	
+	<link rel="stylesheet" href="css/mic.css"/>
+	<link rel="stylesheet" href="css/sequencer.css"/>
+	<link rel="stylesheet" href="css/main.css"/>
 
 	<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 
@@ -18,16 +20,27 @@
 	<script src="js/RecordBufferItem.js"></script>
 	<script src="js/RecordNode.js"></script>
 	<script src="js/MeteringNode.js"></script>
+	<script src="js/EffectNode.js"></script>
+	<script src="js/PlaybackItem.js"></script>
+	<script src="js/MicInNode.js"></script>
 	<script src="js/Synthesizer.js"></script>
+	<script src="js/Sequencer.js"></script>
+	<script src="js/Mixer.js"></script>
+	<script src="js/StartUI.js"></script>
 
 	<script>
 	document.addEventListener("DOMContentLoaded", function() {
 
-		var synth = new Synthesizer();
-		synth.setup(document.getElementById('mainContainer'), 1);
+		
+
+		var mainUI = new StartUI();
+		mainUI.setup(document.getElementById('mainContainer'));
+
+		// var mixer = new Mixer();
+		// mixer.setup();
 	});
 	</script>
-
+<!--
 	<style>
 		.nodeWrapper{
 			float: left;
@@ -50,127 +63,212 @@
 			float:left;
 		}
 		.recordedAudioBlock{
-			float: left;
-			width: 50px;
-			height: 50px;
-			background: black;
+			/*float: left;*/
+			/*width: 100px;*/
+			/*padding: 20px;*/
+			/*border: 2px solid black;*/
+			/*background: black;*/
+			/*margin-right: 10px;*/
+		}
+
+		.soundwaveBuffer{
+			width: 100%;
+			position: relative;
+			height: 60px;
 		}
 
 		.recordCircle{
-			border-radius: 5px;
-			width: 10px;
-			height: 10px;
+			border-radius: 20px;
+			width: 40px;
+			height: 40px;
 			background: red;
 			position: absolute;
 			bottom: 200px;
 			right: 20px;
 		}
+		.micRecordPlay{
+			border-radius: 20px;
+			width: 40px;
+			height: 40px;
+			background: yellow;
+			position: absolute;
+			bottom: 380px;
+			right: 90px;
+		}
+		.micRecordCircle{
+			border-radius: 20px;
+			width: 40px;
+			height: 40px;
+			background: green;
+			position: absolute;
+			bottom: 380px;
+			right: 20px;
+		}
+
+		.selectableCanvas{
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+
+		.playBtn{
+			border-radius: 20px;
+			width: 40px;
+			height: 40px;
+			background: blue;
+			position: absolute;
+			bottom: 200px;
+			right: 90px;
+		}
+
+		#sequencer{
+			height: 1000px;
+		}
 
 
 	</style>
+-->
+	<script>
+		window.requestAnimFrame = (function(){
+		    return  window.requestAnimationFrame ||
+		    window.webkitRequestAnimationFrame ||
+		    window.mozRequestAnimationFrame ||
+		    window.oRequestAnimationFrame ||
+		    window.msRequestAnimationFrame ||
+		    function( callback ){
+		        window.setTimeout(callback, 1000 / 60);
+		    };
+		})();
+	</script>
 
 </head>
 
 <body>
 
 	<div id="mainContainer">
-		<div class="modulatorNode nodeWrapper">
-			<h3>Modulator</h3>
-			<div class="inputBlock freq">
-				<!-- <input type="range" name="modSliderFreq" min="1" max="800"> -->
-				<span>Freq</span>
-				<span class="val">val</span>
-			</div>
-
-			<h5 class="amp"></h5>
-		<!-- 	<div class="inputBlock gain">
-				<input type="range" name="modSliderGain" min="1" max="400">
-				<span>Gain</span>
-				<span class="val">val</span>
-			</div> -->
-			<div class="inputBlock envelope">
-				<div class="attack">
-					<input type="range" name="modSliderGain" min="0" max="1000">
-					<span>Attack</span>
-					<span class="val">val</span>
+		<div class="mainGroup synthesizer" data-type="synthesizer">
+			<h3>SYNTHESIZER</h3>
+			<div class="content"></div>
+		</div>
+		<div class="mainGroup sequencer" data-type="sequencer">
+			<h3>SEQUENCER</h3>
+			<div class="content"></div>
+		</div>
+		<div class="mainGroup mic" data-type="mic">
+			<h3>MIC IN</h3>
+			<div class="content">
+				<div class="recWrapper">
+					<h5 class="micRecBtn link">REC</h5>
+					<h5 class="addToSequencer link">ADD TO SEQUENCER</h5>
 				</div>
-				<div class="decay">
-					<input type="range" name="modSliderGain" min="0" max="1000">
-					<span>Decay</span>
-					<span class="val">val</span>
-				</div>
-				<div class="sustain">
-					<input type="range" name="modSliderGain" min="0" max="100">
-					<span>Sustain</span>
-					<span class="val">val</span>
-				</div>
-				<div class="release">
-					<input type="range" name="modSliderGain" min="0" max="4000">
-					<span>Release</span>
-					<span class="val">val</span>
-				</div>
+				<div class="waveformVisual"></div>
 			</div>
 		</div>
-		<div class="carrierNode nodeWrapper">
-			<h3>Carrier</h3>
-			<div class="inputBlock freq">
-				<!-- <input type="range" name="carrSliderFreq" min="1" max="800"> -->
-				<span>Freq</span>
-				<span class="val">val</span>
+		<!-- 
+
+		<div id="sequencer">
+			
+		</div>
+		<div id="synthesizer">
+
+
+			<div class="modulatorNode nodeWrapper">
+				<h3>Modulator</h3>
+				<div class="inputBlock freq">
+					<span>Freq</span>
+					<span class="val">val</span>
+				</div>
+
+				<h5 class="amp"></h5>
+	
+				<div class="inputBlock envelope">
+					<div class="attack">
+						<input type="range" name="modSliderGain" min="0" max="1000">
+						<span>Attack</span>
+						<span class="val">val</span>
+					</div>
+					<div class="decay">
+						<input type="range" name="modSliderGain" min="0" max="1000">
+						<span>Decay</span>
+						<span class="val">val</span>
+					</div>
+					<div class="sustain">
+						<input type="range" name="modSliderGain" min="0" max="100">
+						<span>Sustain</span>
+						<span class="val">val</span>
+					</div>
+					<div class="release">
+						<input type="range" name="modSliderGain" min="0" max="4000">
+						<span>Release</span>
+						<span class="val">val</span>
+					</div>
+				</div>
+			</div>
+			<div class="carrierNode nodeWrapper">
+				<h3>Carrier</h3>
+				<div class="inputBlock freq">
+					<span>Freq</span>
+					<span class="val">val</span>
+				</div>
+
+				<h5 class="amp"></h5>
+				
+				<div class="inputBlock envelope">
+					<h5 class="carrierAmp"></h5>
+					<h5 class="modulatorAmp"></h5>
+					<div class="attack">
+						<input type="range" name="modSliderGain" min="0" max="1000">
+						<span>Attack</span>
+						<span class="val">val</span>
+					</div>
+					<div class="decay">
+						<input type="range" name="modSliderGain" min="0" max="1000">
+						<span>Decay</span>
+						<span class="val">val</span>
+					</div>
+					<div class="sustain">
+						<input type="range" name="modSliderGain" min="0" max="100">
+						<span>Sustain</span>
+						<span class="val">val</span>
+					</div>
+					<div class="release">
+						<input type="range" name="modSliderGain" min="0" max="4000">
+						<span>Release</span>
+						<span class="val">val</span>
+					</div>
+				</div>
 			</div>
 
-			<h5 class="amp"></h5>
-			<!-- <div class="inputBlock gain">
-				<input type="range" name="carrSliderGain" min="1" max="400">
-				<span>Gain</span>
-				<span class="val">val</span>
-			</div> -->
-			<div class="inputBlock envelope">
-				<h5 class="carrierAmp"></h5>
-				<h5 class="modulatorAmp"></h5>
-				<div class="attack">
-					<input type="range" name="modSliderGain" min="0" max="1000">
-					<span>Attack</span>
-					<span class="val">val</span>
-				</div>
-				<div class="decay">
-					<input type="range" name="modSliderGain" min="0" max="1000">
-					<span>Decay</span>
-					<span class="val">val</span>
-				</div>
-				<div class="sustain">
-					<input type="range" name="modSliderGain" min="0" max="100">
-					<span>Sustain</span>
-					<span class="val">val</span>
-				</div>
-				<div class="release">
-					<input type="range" name="modSliderGain" min="0" max="4000">
-					<span>Release</span>
+			<div class="masterGainNode nodeWrapper">
+				<h3>MasterVol</h3>
+				<div class="inputBlock gain">
+					<input type="range" name="masterSliderGain" min="0" max="1" step="0.01">
 					<span class="val">val</span>
 				</div>
 			</div>
+
+			<div id="carrWaveformAnalyser"><h5>Modulator</h5></div>
+
+			<div id="masterWaveformAnalyser"><h5>Master</h5></div>
+
+			<div id="carrSpectrumAnalyser"><h5>Carrier Spectrum</h5></div>
+
 		</div>
 
-		<div class="masterGainNode nodeWrapper">
-			<h3>MasterVol</h3>
-			<div class="inputBlock gain">
-				<input type="range" name="masterSliderGain" min="0" max="1" step="0.01">
-				<span class="val">val</span>
-			</div>
-		</div>
-
+		<div class="micRecordCircle"></div>
+		<div class="micRecordPlay"></div>
 		<div class="recordCircle"></div>
+		<div class="playBtn"></div> 
+
+	-->
+
 	</div>
 
 
 
 	
 	
-	<div id="carrWaveformAnalyser"><h5>Modulator</h5></div>
-
-	<div id="masterWaveformAnalyser"><h5>Master</h5></div>
-
-	<div id="carrSpectrumAnalyser"><h5>Carrier Spectrum</h5></div>
+	
 
 
 </body>

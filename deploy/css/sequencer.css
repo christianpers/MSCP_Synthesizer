@@ -1,0 +1,31 @@
+.sequencer .content{
+
+}
+
+.sequencer .recordedAudioBlock{
+
+	margin: 10px auto;
+}
+
+.recordedAudioBlock .soundwaveBuffer{
+	margin-bottom: 20px;
+}
+
+.recordedAudioBlock .fxControlWrapper{
+	width: 200px;
+	/*height: 20px;*/
+	/*background: rgba(102,184,122,1);*/
+	float: left;
+	margin-right: 30px;
+	margin-top: 40px;
+}
+
+.recordedAudioBlock .fxControlWrapper .title{
+	color: white
+}
+
+.recordedAudioBlock .fxControl{
+	width: 200px;
+	height: 20px;
+	background: rgba(102,184,122,1);
+}

@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'BrandonGrotesqueLight';
+    src: url('brandon_light.eot');
+    src: url('brandon_light.eot') format('embedded-opentype'),
+         url('brandon_light.woff') format('woff'),
+         url('brandon_light.ttf') format('truetype'),
+         url('brandon_light.svg#BrandonGrotesqueLight') format('svg');
+}

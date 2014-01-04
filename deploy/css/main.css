@@ -1,0 +1,72 @@
+@font-face {
+    font-family: 'BrandonGrotesqueLight';
+    src: url('brandon_light.eot');
+    src: url('brandon_light.eot') format('embedded-opentype'),
+         url('brandon_light.woff') format('woff'),
+         url('brandon_light.ttf') format('truetype'),
+         url('brandon_light.svg#BrandonGrotesqueLight') format('svg');
+}
+
+
+
+body{
+	background: #252626;
+	height: 100%;
+	width: 100%;
+	margin: 0;
+}
+
+h1,h2,h3,h4,h5,p,a{
+	font-family: 'BrandonGrotesqueLight';
+	font-weight: lighter;
+	color: white;
+}
+
+.link:hover{
+	cursor: pointer;
+}
+
+.mainGroup{
+	width: 100%;
+	box-sizing: border-box;
+	height: 1000px;
+	background: #252626;
+	position: absolute;
+	top: 0;
+
+}
+.mainGroup .content{
+	height: 0;
+	margin-top: 80px;
+	overflow: hidden;
+
+}
+
+.mainGroup h3{
+	font-size: 42px;
+	color: white;
+	margin: 0;
+	line-height: 74px;
+	height: 140px;
+	padding: 30px 30px 30px 30px;
+	display: block;
+	box-sizing: border-box;
+}
+.mainGroup h3:hover{
+	cursor: pointer;
+}
+.mainGroup.synthesizer h3{
+	border-bottom: 10px solid #333f7e;
+}
+.mainGroup.sequencer h3{
+	border-bottom: 10px solid #ab4a24;
+}
+.mainGroup.mic h3{
+	border-bottom: 10px solid #6abc6a;
+}
+#sequencer{
+	display: none;
+}
+#synthesizer{
+	display: none;
+}

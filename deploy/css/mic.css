@@ -1,0 +1,22 @@
+.mic .content{
+	padding: 0 50px;
+	box-sizing: border-box;
+
+}
+
+.mic .recWrapper{
+	height: 100px;
+}
+
+.mic .micRecBtn{
+	float: left;
+	color: red;
+}
+
+.mic .addToSequencer{
+	float: right;
+}
+.mic .waveformVisual{
+	height: 100px;
+	width: 100%;
+}

@@ -18,6 +18,7 @@
 		this._masterWaveformAnalyser = null;
 
 		this._recorderNode = null;
+
 	};
 
 	var p = Synthesizer.prototype;
@@ -26,90 +27,94 @@
 	Synthesizer.BASE_FREQ = 440;
 	Synthesizer.BASE_OCTAVE = 4;
 
-	p.setup = function(el, gain){
+	p.setup = function(ctx, el, gain, connectFn){
+
+		/*   
+			FM -> LOPASS -> MasterGain ----> MeterNode
+									   ----> RecorderNode
+									   ----> WaveAnalyser
+									   ----> MixerOut
+		
+		*/
 
 		this._el = el;
+		this._content = el.querySelector('.content');
 
-		this._audioCtx = new webkitAudioContext();
-		this._freqModulator = new FrequencyModulator();
-		this._freqModulator.setup(this._audioCtx);
+		// this._audioCtx = ctx;
+		// this._freqModulator = new FrequencyModulator();
+		// this._freqModulator.setup(this._audioCtx);
 
-		this._keyboard = new Keyboard();
-		this._keyboard.setup();
+		// this._keyboard = new Keyboard();
+		// this._keyboard.setup();
 
-		this._currentOctave = Synthesizer.BASE_OCTAVE;
+		// this._currentOctave = Synthesizer.BASE_OCTAVE;
 
-		this._masterGainVisuals.slider = this._el.querySelector('.masterGainNode input');
-		this._masterGainVisuals.val = this._el.querySelector('.masterGainNode .val');
-		this._masterGain = this._audioCtx.createGain();
-		this._masterGainVisuals.slider.value = gain;
-		this.setMasterGain(gain);
+		// this._masterGainVisuals.slider = this._el.querySelector('.masterGainNode input');
+		// this._masterGainVisuals.val = this._el.querySelector('.masterGainNode .val');
+		// this._masterGain = this._audioCtx.createGain();
+		// this._masterGainVisuals.slider.value = gain;
+		// this.setMasterGain(gain);
 
-		this._masterGainVisuals.slider.addEventListener('change', this._onMasterGainSliderChange.bind(this));
+		// this._masterGainVisuals.slider.addEventListener('change', this._onMasterGainSliderChange.bind(this));
 		
 
 	
-		this._freqModulator.connect(this._masterGain);
+		
 
-		this._meterNode = new MeteringNode();
-		this._meterNode.setup(this._audioCtx);
+		// this._meterNode = new MeteringNode();
+		// this._meterNode.setup(this._audioCtx);
 
 	
-		this._masterGain.connect(this._meterNode.node);
+		// this._masterGain.connect(this._meterNode.node);
 
-		this._meterNode.connect(this._audioCtx.destination);
+	
+	
+		// this._lopass = this._audioCtx.createBiquadFilter();
+		// this._lopass.type = "lowpass";
+		// this._lopass.frequency.value = 2600;
 
-		// var delayNodeTest = this._audioCtx.createDelayNode();
-		// delayNodeTest.delayTime.value = .4;
+		// this._freqModulator.connect(this._lopass);
+
+	
+		// this._recorderNode = new RecordNode();
+		// var parent = document.getElementById('mainContainer');
+		// var recordTriggerEl = parent.querySelector('.recordCircle');
+		// this._recorderNode.setup(this._audioCtx, recordTriggerEl);
+	
+		// this._lopass.connect(this._recorderNode.node);
+		// this._recorderNode.node.connect(this._masterGain);
+	
+		// this._lopass.connect(this._masterGain);
+
+		// this._masterWaveformAnalyser = new WaveformAnalyser();
+		// this._masterWaveformAnalyser.setup(this._audioCtx, document.getElementById('masterWaveformAnalyser'),256);
+		// this._masterWaveformAnalyser.connect(this._masterGain);
+
+		// document.addEventListener('keydown', this._onKeyDown.bind(this));
+		// document.addEventListener('keyup', this._onKeyUp.bind(this));
+
 		
-
-		var lopassTest = this._audioCtx.createBiquadFilter();
-		lopassTest.type = "lowpass";
-		lopassTest.frequency.value = 800;
-
-		this._masterGain.connect(lopassTest);
-
-		this._recorderNode = new RecordNode();
-		this._recorderNode.setup(this._audioCtx);
-		lopassTest.connect(this._recorderNode.node);
-		this._recorderNode.createNewBuffer();
-		this._recorderNode.node.connect(this._audioCtx.destination);
-
-		
-
-		lopassTest.connect(this._audioCtx.destination);
-
-		this._masterWaveformAnalyser = new WaveformAnalyser();
-		this._masterWaveformAnalyser.setup(this._audioCtx, document.getElementById('masterWaveformAnalyser'),256);
-		this._masterWaveformAnalyser.connect(this._masterGain);
-
-		document.addEventListener('keydown', this._onKeyDown.bind(this));
-		document.addEventListener('keyup', this._onKeyUp.bind(this));
-
-		var self = this;
-		this._updateVisualsTimer = setInterval(function(){
-
-			self.updateVisuals();
-
-
-		},60);
 
 
 	};
 
-	// function processAudio(e) {
-	//   var buffer = e.inputBuffer.getChannelData(0);
+	p.show = function(){
 
-	//   var isClipping = false;
-	//   // Iterate through buffer to check if any of the |values| exceeds 1.
-	//   for (var i = 0; i < buffer.length; i++) {
-	//     var absValue = Math.abs(buffer[i]);
-	//     if (absValue >= 1) {
-	//       isClipping = true;
-	//       break;
-	//     }
-	//   }
-	// }
+		this._content.style.height = '1000px';
+
+	};
+
+	p.hide = function(){
+
+		this._content.style.height = '0px';
+	};
+
+	p.getOutputNode = function(){
+
+		return	this._masterGain;	
+	};
+
+
 
 	p.setMasterGain = function(val){
 
@@ -122,6 +127,16 @@
 
 		var val = e.target.value;
 		this.setMasterGain(val);
+	};
+
+	p.getLatestRecordBuffer = function(){
+
+		return this._recorderNode.getLatestBuffer();
+	};
+
+	p.deactivateRecording = function(){
+
+		this._recorderNode.deactivateRecording();	
 	};
 
 	p._onKeyDown = function(e){
