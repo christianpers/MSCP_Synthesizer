@@ -23,7 +23,7 @@
 	p.setup = function(ctx, recordTriggerEl){
 
 		this._audioCtx = ctx;
-		this.node = ctx.createJavaScriptNode(4096,2,2);
+		this.node = ctx.createScriptProcessor(4096,2,2);
 		this._el = recordTriggerEl;
 		// var parent = document.getElementById('mainContainer');
 		// this._el = parent.querySelector('.recordCircle');
@@ -52,7 +52,9 @@
 	p.onRecordClick = function(){
 
 		if (this.record) this.deactivateRecording();
-		else this.activateRecording();	
+		else this.activateRecording();
+
+
 
 	};
 
@@ -82,7 +84,9 @@
 
 		this.createNewBuffer();
 		this._recordTimeCheck = null;
-		this.record = true;	
+		this.record = true;
+
+		console.log('activate recording');
 		
 
 	};

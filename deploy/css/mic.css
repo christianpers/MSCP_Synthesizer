@@ -10,7 +10,9 @@
 
 .mic .micRecBtn{
 	float: left;
-	color: red;
+	color: white;
+	background-color: red;
+	padding: 10px;
 }
 
 .mic .addToSequencer{
